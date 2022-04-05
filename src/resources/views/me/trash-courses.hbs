@@ -1,0 +1,132 @@
+<div class="mt-4">
+    <div>
+      <h3>Khóa học đã xóa</h3>
+      <a href="/me/store/courses">khóa học của tôi</a>
+    </div>
+
+    <table class="table mt-4">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Tên Khóa Học</th>
+                <th scope="col">Trình độ</th>
+                <th scope="col">Thời gian xóa</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each courses}}
+            <tr>
+                <th scope="row">{{sum @index 1}}</th>
+                <td>{{this.name}}</td>
+                <td>{{this.level}}</td>
+                <td>{{this.deletedAt}}</td>
+                <td>
+                    <a href="" class="btn btn-link btn-restore"  data_id ="{{this._id}}">Khôi phục</a>
+                    <a href="" class="btn btn-link" id="delete" data_id ="{{this._id}}" data-bs-toggle="modal" data-bs-target="#DeleteCourseModal">XÓA vĩnh viễn</a>
+                </td>
+            </tr>
+
+            {{else}}
+            <tr>
+              <td colspan="5" class="text-center">
+                Thùng rác trống.
+              </td>
+            </tr>
+            {{/each}}
+            
+        </tbody>
+    </table>
+
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="DeleteCourseModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Xóa khóa học?</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Bạn có muốn xóa khóa học này?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+        <button type="button" id="BTN-delete-course" class="btn btn-primary" >Xóa vĩnh viễn</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{{!-- Delete hiden form --}}
+{{!--  action="/courses/{{course._id}}?_method=DELETE --}}
+<form name="deleteCourseForm" method="POST"></form>
+<form name="restoreCourseForm" method="POST"></form>
+
+
+
+<script>
+
+    // Lấy ra ID khi click button.
+
+        var CourseID;
+        var DeleteCourseModal = document.getElementById('DeleteCourseModal');
+        var deleteform = document.forms['deleteCourseForm'];
+        var restoreform = document.forms['restoreCourseForm'];
+
+        var BtnDeleteCourse = document.getElementById('BTN-delete-course');
+
+        var restoreBtns = document.querySelectorAll('.btn-restore')
+
+        DeleteCourseModal.addEventListener('show.bs.modal', function (event) {
+        // Button that triggered the modal
+        var button = event.relatedTarget
+        // Extract info from data-bs-* attributes
+        var id = button.getAttribute('data_id');
+        CourseID = id;
+        })
+
+        /* Mongooses
+        BtnDeleteCourse.onclick = function() {
+            deleteform.action = '/courses/' + CourseID + '/force' + '?_method=DELETE';
+            deleteform.submit();
+            }
+        */
+      
+        
+
+        Array.from(restoreBtns).forEach(function(restoreBtn) {
+          if(restoreBtn) {
+            restoreBtn.onclick = function(e) {
+              e.preventDefault();
+              var courseID = restoreBtn.getAttribute('data_id');
+
+              restoreform.action = '/courses/' + courseID +'/restore' + '?_method=PATCH';
+              restoreform.submit();
+            }
+          }
+        })
+
+        
+        // code thuần js
+      
+        btndeletes = document.querySelectorAll('#delete')
+        Array.from(btndeletes).forEach(function(btndelete) {
+          btndelete.onclick = function(e) {
+            e.preventDefault();
+            var courseId = btndelete.getAttribute('data_id');
+
+            BtnDeleteCourse.onclick = function() {
+            deleteform.action = '/courses/' + courseId + '/force' + '?_method=DELETE';
+            deleteform.submit();
+            }
+          }
+        })
+
+        
+        
+
+
+
+
+</script>
